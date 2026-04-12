@@ -1,0 +1,2486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #10111a;
+  --white: #ffffff;
+  --white-10: rgba(255, 255, 255, 0.1);
+  --white-12: rgba(255, 255, 255, 0.12);
+  --white-25: rgba(255, 255, 255, 0.25);
+  --white-03: rgba(255, 255, 255, 0.03);
+  --text-secondary: #9899af;
+  --text-muted: #6b6c82;
+  --accent: #cc004c;
+  --primary: #5955f4;
+  --nav-glass: rgba(16, 17, 26, 0.72);
+  --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  --deck-width: 1920px;
+  --deck-height: 1080px;
+  --safe-x: 60px;
+  --safe-top: 32px;
+  --safe-bottom: 60px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 220ms;
+  --dur-slow: 680ms;
+  --font-display: "Bebas Neue", "Arial Narrow", sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--white);
+  font-family: var(--font-body);
+}
+
+button {
+  font: inherit;
+}
+
+.presentation {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+.deck {
+  position: absolute;
+  width: var(--deck-width);
+  height: var(--deck-height);
+  transform-origin: top left;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  width: var(--deck-width);
+  height: var(--deck-height);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-fast) ease;
+}
+
+.slide.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.slide-cover {
+  background:
+    radial-gradient(circle at 12% 102%, rgba(204, 0, 76, 0.12), transparent 34%),
+    radial-gradient(circle at 88% 8%, rgba(89, 85, 244, 0.16), transparent 28%),
+    linear-gradient(180deg, rgba(22, 23, 36, 0.28), rgba(16, 17, 26, 0.1)),
+    var(--bg);
+}
+
+.grid-overlay {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.grid-overlay::before,
+.grid-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.grid-overlay::before {
+  background-image:
+    linear-gradient(var(--white-03) 1px, transparent 1px),
+    linear-gradient(90deg, var(--white-03) 1px, transparent 1px);
+  background-size: 68px 68px;
+  opacity: 0.9;
+}
+
+.grid-overlay::after {
+  background:
+    linear-gradient(90deg, rgba(16, 17, 26, 0.02) 0%, rgba(16, 17, 26, 0.08) 42%, rgba(16, 17, 26, 0.68) 76%, var(--bg) 100%),
+    linear-gradient(180deg, rgba(16, 17, 26, 0.04) 0%, rgba(16, 17, 26, 0.02) 32%, rgba(16, 17, 26, 0.42) 68%, rgba(16, 17, 26, 0.86) 100%);
+}
+
+.progress-bar,
+.bottom-cover {
+  position: absolute;
+  left: 0;
+  height: 3px;
+  z-index: 3;
+}
+
+.progress-bar {
+  top: 0;
+  width: 0;
+  background: var(--accent);
+  transition: width var(--dur-fast) var(--ease-out);
+}
+
+.bottom-cover {
+  bottom: 0;
+  width: 1280px;
+  background: linear-gradient(90deg, var(--accent), rgba(204, 0, 76, 0));
+}
+
+.deck-ui {
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  pointer-events: none;
+}
+
+.top-meta,
+.bottom-meta {
+  position: absolute;
+  left: var(--safe-x);
+  width: calc(var(--deck-width) - (var(--safe-x) * 2));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 2;
+}
+
+
+.top-meta {
+  top: var(--safe-top);
+}
+
+.bottom-meta {
+  bottom: var(--safe-bottom);
+}
+
+.deck-ui .nav {
+  pointer-events: auto;
+}
+
+.page-title,
+.count,
+.brand-label,
+.speaker-role,
+.speaker-date {
+  color: var(--text-secondary);
+}
+
+.page-title,
+.count {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-mark {
+  width: 24px;
+  height: 24px;
+  display: block;
+  object-fit: cover;
+}
+
+.brand-label {
+  font-size: 20px;
+  line-height: 1.5;
+}
+
+.deck-ui.ui-light-brand .brand-label {
+  color: #3c3d54;
+}
+
+.count {
+  display: flex;
+  gap: 10px;
+  color: var(--text-muted);
+}
+
+.hero {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 724px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 56px;
+  transform: translate(-50%, calc(-50% + 54px));
+  text-align: center;
+  z-index: 2;
+}
+
+.hero-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 128px;
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -1.28px;
+  text-transform: uppercase;
+}
+
+.hero-title .accent {
+  color: var(--accent);
+}
+
+.hero-copy {
+  width: 100%;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.hero-copy strong {
+  color: var(--white);
+  font-weight: 700;
+}
+
+.slide-about {
+  background:
+    radial-gradient(circle at 12% 102%, rgba(204, 0, 76, 0.12), transparent 34%),
+    radial-gradient(circle at 88% 8%, rgba(89, 85, 244, 0.16), transparent 28%),
+    linear-gradient(180deg, rgba(22, 23, 36, 0.28), rgba(16, 17, 26, 0.1)),
+    var(--bg);
+}
+
+.about-left {
+  position: absolute;
+  left: 120px;
+  top: 50%;
+  width: 724px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 36px;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.about-kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.about-kicker-line {
+  width: 120px;
+  height: 3px;
+  background: var(--accent);
+}
+
+.about-kicker-text {
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.65;
+  letter-spacing: 1.12px;
+  text-transform: uppercase;
+}
+
+.about-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 96px;
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.96px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.about-intro,
+.about-body {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.about-intro {
+  width: 724px;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+.about-intro strong {
+  color: var(--white);
+  font-weight: 700;
+}
+
+.about-body {
+  width: 724px;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.about-portrait-frame {
+  position: absolute;
+  left: 1166.5px;
+  top: 316.47px;
+  width: 350px;
+  height: 442.06px;
+  z-index: 2;
+}
+
+.about-portrait-art {
+  position: absolute;
+  left: -71.22px;
+  top: -34.74px;
+  width: 531.514px;
+  height: 586.228px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.about-roles {
+  position: absolute;
+  right: 120px;
+  bottom: 140px;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: 0.66px;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.slide-agenda {
+  background: var(--white);
+  color: #10111a;
+}
+
+.agenda-light-side,
+.agenda-dark-side {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+.agenda-light-side {
+  left: 0;
+  width: 1260px;
+  background:
+    radial-gradient(circle at 8% 100%, rgba(204, 0, 76, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.98)),
+    var(--white);
+  overflow: hidden;
+}
+
+.agenda-light-side::before,
+.agenda-light-side::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.agenda-light-side::before {
+  background-image:
+    linear-gradient(rgba(89, 85, 244, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(89, 85, 244, 0.055) 1px, transparent 1px);
+  background-size: 68px 68px;
+}
+
+.agenda-light-side::after {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0));
+}
+
+.agenda-dark-side {
+  right: 0;
+  width: 660px;
+  background:
+    radial-gradient(circle at 12% 102%, rgba(204, 0, 76, 0.12), transparent 34%),
+    radial-gradient(circle at 88% 8%, rgba(89, 85, 244, 0.16), transparent 28%),
+    linear-gradient(180deg, rgba(22, 23, 36, 0.28), rgba(16, 17, 26, 0.1)),
+    var(--bg);
+}
+
+.agenda-header {
+  position: absolute;
+  left: 120px;
+  top: 186px;
+  width: 724px;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  z-index: 2;
+}
+
+.agenda-kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.agenda-kicker-line {
+  width: 120px;
+  height: 3px;
+  background: var(--accent);
+}
+
+.agenda-kicker-text {
+  color: #10111a;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.65;
+  letter-spacing: 1.12px;
+  text-transform: uppercase;
+}
+
+.agenda-title {
+  margin: 0;
+  color: #10111a;
+  font-family: var(--font-display);
+  font-size: 80px;
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.8px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.agenda-list {
+  position: absolute;
+  left: 120px;
+  top: 356px;
+  width: 780px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  z-index: 2;
+}
+
+.agenda-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 16px 20px;
+  border-left: 4px solid #eeeeff;
+}
+
+.agenda-index {
+  width: 60px;
+  flex: 0 0 auto;
+  color: var(--primary);
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0.48px;
+}
+
+.agenda-copy {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.agenda-item-title {
+  margin: 0;
+  color: #10111a;
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0.28px;
+  text-transform: uppercase;
+}
+
+.agenda-item-text {
+  margin: 0;
+  color: #3c3d54;
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+.question-card {
+  position: absolute;
+  top: 309px;
+  right: 120px;
+  width: 420px;
+  padding: 16px;
+  border-top: 4px solid var(--accent);
+  z-index: 2;
+}
+
+.question-mark {
+  margin: 0 0 20px;
+  color: var(--primary);
+  font-family: var(--font-display);
+  font-size: 56px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0.56px;
+}
+
+.question-title {
+  margin: 0 0 20px;
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0.28px;
+  text-transform: uppercase;
+}
+
+.question-list {
+  margin: 0;
+  padding-left: 24px;
+  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.question-list li + li {
+  margin-top: 18px;
+}
+
+.slide-dark-grid {
+  background:
+    radial-gradient(circle at 12% 102%, rgba(204, 0, 76, 0.12), transparent 34%),
+    radial-gradient(circle at 88% 8%, rgba(89, 85, 244, 0.16), transparent 28%),
+    linear-gradient(180deg, rgba(22, 23, 36, 0.28), rgba(16, 17, 26, 0.1)),
+    var(--bg);
+}
+
+.light-grid-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 8% 100%, rgba(204, 0, 76, 0.06), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.98)),
+    var(--white);
+}
+
+.light-grid-bg::before,
+.light-grid-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.light-grid-bg::before {
+  background-image:
+    linear-gradient(rgba(89, 85, 244, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(89, 85, 244, 0.055) 1px, transparent 1px);
+  background-size: 68px 68px;
+}
+
+.light-grid-bg::after {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0));
+}
+
+.slide-ai-definition .grid-overlay::after,
+.slide-gaia-demo .grid-overlay::after,
+.slide-smartbricks-demo .grid-overlay::after,
+.slide-questions .grid-overlay::after,
+.slide-thanks .grid-overlay::after {
+  background:
+    linear-gradient(90deg, rgba(16, 17, 26, 0.02) 0%, rgba(16, 17, 26, 0.06) 40%, rgba(16, 17, 26, 0.42) 72%, rgba(16, 17, 26, 0.84) 100%),
+    linear-gradient(180deg, rgba(16, 17, 26, 0.04) 0%, rgba(16, 17, 26, 0.02) 32%, rgba(16, 17, 26, 0.24) 68%, rgba(16, 17, 26, 0.74) 100%);
+}
+
+.section-overline,
+.walkthrough-overline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-overline-line,
+.walkthrough-overline-line {
+  width: 120px;
+  height: 3px;
+  background: var(--accent);
+}
+
+.section-overline-text,
+.walkthrough-overline-text {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.65;
+  letter-spacing: 1.12px;
+  text-transform: uppercase;
+}
+
+.section-overline-text {
+  color: #10111a;
+}
+
+.walkthrough-overline-text {
+  color: var(--white);
+}
+
+.slide-ai-definition .section-overline-text {
+  color: var(--white);
+}
+
+.slide-intro-light {
+  background: var(--white);
+  color: #10111a;
+}
+
+.intro-title-block {
+  position: absolute;
+  left: 120px;
+  top: 180px;
+  width: 540px;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  z-index: 2;
+}
+
+.intro-title {
+  margin: 0;
+  color: #10111a;
+  font-family: var(--font-display);
+  font-size: 80px;
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.8px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.intro-copy-stack {
+  position: absolute;
+  left: 120px;
+  top: 350px;
+  width: 540px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  z-index: 2;
+}
+
+.intro-lead,
+.intro-body {
+  margin: 0;
+  color: #3c3d54;
+}
+
+.intro-lead {
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+.intro-body {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.info-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  width: 100%;
+}
+
+.info-card {
+  border: 1px solid #eeeeff;
+  border-radius: 16px;
+  background: var(--white);
+  padding: 16px 14px;
+}
+
+.info-card.half {
+  width: 254px;
+}
+
+.info-card.full {
+  width: 100%;
+}
+
+.info-label {
+  margin: 0 0 16px;
+  color: #6b6c82;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.65;
+  letter-spacing: 0.44px;
+  text-transform: uppercase;
+}
+
+.info-value {
+  margin: 0;
+  color: #10111a;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.intro-hero-frame {
+  position: absolute;
+  top: 180px;
+  right: -120px;
+  width: 1320px;
+  height: 720px;
+  border: 10px solid rgba(187, 213, 234, 0.3);
+  border-radius: 32px;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.intro-hero-frame.narrow {
+  right: -80px;
+  width: 1280px;
+}
+
+.intro-hero-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.slide-gaia-intro .intro-hero-frame {
+  background: linear-gradient(180deg, #dbe3eb 0%, #d7e1eb 100%);
+}
+
+.slide-gaia-intro .intro-hero-frame img {
+  object-fit: cover;
+  object-position: center center;
+}
+
+.slide-gaia-walkthrough .walkthrough-main {
+  gap: 44px;
+}
+
+.slide-gaia-walkthrough .walkthrough-main-body {
+  gap: 40px;
+}
+
+.slide-gaia-walkthrough .walk-step {
+  gap: 24px;
+}
+
+.slide-gaia-walkthrough .walkthrough-sidebar.w600 {
+  padding: 228px 120px;
+}
+
+.slide-gaia-walkthrough .walkthrough-sidebar-stack {
+  gap: 40px;
+}
+
+.slide-gaia-walkthrough .side-card {
+  padding: 20px;
+  gap: 20px;
+}
+
+.walkthrough-main {
+  position: absolute;
+  left: 120px;
+  top: 120px;
+  width: 540px;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  z-index: 2;
+}
+
+.walkthrough-heading {
+  margin: 0;
+  color: #10111a;
+  font-family: var(--font-display);
+  font-size: 80px;
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.8px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.walkthrough-main-body {
+  position: absolute;
+  left: 120px;
+  top: 290px;
+  width: 1020px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  z-index: 2;
+}
+
+.walkthrough-main-body.narrow {
+  top: 190px;
+  width: 540px;
+}
+
+.walk-step {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.walk-step-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.walk-step-index {
+  width: 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 0 0 auto;
+}
+
+.walk-step-index span {
+  color: #9899af;
+  font-family: var(--font-display);
+  font-size: 56px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0.56px;
+}
+
+.walk-step-index .line {
+  width: 120px;
+  height: 3px;
+  background: var(--primary);
+}
+
+.walk-step-title-wrap {
+  padding-top: 16px;
+}
+
+.walk-step-title {
+  margin: 0;
+  color: #10111a;
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0.36px;
+  text-transform: uppercase;
+}
+
+.walk-step-copy,
+.walk-step-list,
+.walk-step-list ul {
+  margin: 0;
+  color: #3c3d54;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.walk-step-list,
+.walk-step-list ul {
+  padding-left: 24px;
+}
+
+.walk-step-list ul {
+  padding-left: 24px;
+  margin-top: 0;
+}
+
+.walk-step-list li + li {
+  margin-top: 2px;
+}
+
+.walkthrough-sidebar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 1080px;
+  background:
+    radial-gradient(circle at 12% 102%, rgba(204, 0, 76, 0.12), transparent 34%),
+    radial-gradient(circle at 88% 8%, rgba(89, 85, 244, 0.16), transparent 28%),
+    linear-gradient(180deg, rgba(22, 23, 36, 0.28), rgba(16, 17, 26, 0.1)),
+    var(--bg);
+  z-index: 1;
+}
+
+.walkthrough-sidebar.w600 {
+  width: 600px;
+  padding: 212px 110px;
+}
+
+.walkthrough-sidebar.w900 {
+  width: 900px;
+  padding: 104px;
+}
+
+.walkthrough-sidebar.w1140 {
+  width: 1140px;
+  padding: 104px;
+}
+
+.walkthrough-sidebar-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.walkthrough-sidebar-stack.gap-52 {
+  gap: 40px;
+}
+
+.side-card {
+  border-top: 4px solid var(--accent);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.side-card.quote-large .quote-mark {
+  line-height: 0.3;
+}
+
+.quote-mark {
+  margin: 0;
+  color: var(--primary);
+  font-family: var(--font-display);
+  font-size: 56px;
+  font-weight: 400;
+  line-height: 0.3;
+  letter-spacing: 0.56px;
+}
+
+.side-card-title {
+  margin: 0;
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0.28px;
+  text-transform: uppercase;
+}
+
+.side-card-copy,
+.side-card-list {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.side-card-list {
+  padding-left: 24px;
+}
+
+.side-card-list li + li {
+  margin-top: 2px;
+}
+
+.slide-demo {
+  background:
+    radial-gradient(circle at 12% 102%, rgba(204, 0, 76, 0.12), transparent 34%),
+    radial-gradient(circle at 88% 8%, rgba(89, 85, 244, 0.16), transparent 28%),
+    linear-gradient(180deg, rgba(22, 23, 36, 0.28), rgba(16, 17, 26, 0.1)),
+    var(--bg);
+}
+
+.demo-title-block {
+  position: absolute;
+  left: 120px;
+  top: 120px;
+  width: 540px;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  z-index: 2;
+}
+
+.demo-title {
+  margin: 0;
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 80px;
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.8px;
+  text-transform: uppercase;
+}
+
+.demo-overline-text {
+  color: var(--white);
+}
+
+.demo-caption {
+  position: absolute;
+  right: 120px;
+  top: 235px;
+  display: flex;
+  align-items: center;
+  gap: 27px;
+  z-index: 2;
+}
+
+.demo-caption p {
+  margin: 0;
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0.4px;
+}
+
+.demo-caption-icon {
+  width: 46px;
+  height: 46px;
+  position: relative;
+}
+
+.demo-caption-icon img {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  display: block;
+}
+
+.demo-frame {
+  position: absolute;
+  left: 120px;
+  top: 331px;
+  width: 1680px;
+  border-radius: 32px;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.demo-frame.gaia {
+  height: 917px;
+  border: 10px solid rgba(187, 213, 234, 0.1);
+}
+
+.demo-frame.smart {
+  height: 945px;
+  border: 10px solid rgba(187, 213, 234, 0.3);
+}
+
+.demo-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.slide-gaia-demo .demo-frame,
+.slide-smartbricks-demo .demo-frame,
+.slide-ai-workflow .workflow-frame,
+.slide-smartbricks-intro .intro-hero-frame {
+  background: linear-gradient(180deg, #dbe3eb 0%, #d7e1eb 100%);
+}
+
+.slide-gaia-demo .demo-frame img,
+.slide-smartbricks-demo .demo-frame img,
+.slide-ai-workflow .workflow-frame img,
+.slide-smartbricks-intro .intro-hero-frame img {
+  object-fit: contain;
+  object-position: center center;
+}
+
+.questions-main {
+  position: absolute;
+  left: 120px;
+  top: 358px;
+  width: 1080px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 44px;
+  z-index: 2;
+}
+
+.questions-title {
+  margin: 0;
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 80px;
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.8px;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.questions-title .accent {
+  color: var(--accent);
+}
+
+.questions-lead {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.questions-card {
+  width: 100%;
+}
+
+.questions-side {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 600px;
+  height: 1080px;
+  padding: 168px 110px;
+  border-left: 1px solid rgba(89, 85, 244, 0.2);
+  background:
+    linear-gradient(90deg, rgba(89, 85, 244, 0.03) 0%, rgba(89, 85, 244, 0.03) 100%),
+    linear-gradient(90deg, rgb(16, 17, 26) 0%, rgb(16, 17, 26) 100%);
+  z-index: 1;
+}
+
+.questions-side-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.questions-side-lead {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+.workflow-title {
+  position: absolute;
+  left: 50%;
+  top: 180px;
+  transform: translateX(-50%);
+  margin: 0;
+  color: #10111a;
+  font-family: var(--font-display);
+  font-size: 80px;
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.8px;
+  text-transform: uppercase;
+  z-index: 2;
+}
+
+.workflow-title .accent {
+  color: var(--accent);
+}
+
+.workflow-frame {
+  position: absolute;
+  left: 120px;
+  top: 331px;
+  width: 1680px;
+  height: 1183px;
+  border: 10px solid rgba(234, 214, 187, 0.4);
+  border-radius: 32px;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.workflow-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.workflow-credit {
+  position: absolute;
+  right: 120px;
+  top: 231px;
+  width: 212px;
+  height: 60px;
+  z-index: 2;
+}
+
+.workflow-credit-avatar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  overflow: hidden;
+  background: #f5dada;
+}
+
+.workflow-credit-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.workflow-credit-name {
+  position: absolute;
+  left: 80px;
+  top: 12px;
+  margin: 0;
+  color: #3c3d54;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+.workflow-credit-role {
+  position: absolute;
+  left: 80px;
+  top: 35px;
+  margin: 0;
+  color: #6b6c82;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.slide-thanks {
+  background:
+    radial-gradient(circle at 12% 102%, rgba(204, 0, 76, 0.12), transparent 34%),
+    radial-gradient(circle at 88% 8%, rgba(89, 85, 244, 0.16), transparent 28%),
+    linear-gradient(180deg, rgba(22, 23, 36, 0.28), rgba(16, 17, 26, 0.1)),
+    var(--bg);
+}
+
+.thanks-glow {
+  position: absolute;
+  left: 403px;
+  top: -446px;
+  width: 1098px;
+  height: 1098px;
+  z-index: 1;
+  opacity: 0.8;
+}
+
+.thanks-glow img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.thanks-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 724px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 54px;
+  transform: translate(-50%, calc(-50% + 54px));
+  z-index: 2;
+  text-align: center;
+}
+
+.thanks-title {
+  margin: 0;
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 128px;
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -1.28px;
+  text-transform: uppercase;
+}
+
+.thanks-title .accent {
+  color: var(--accent);
+}
+
+.thanks-copy {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.slide-ai-definition .hero-copy,
+.slide-thanks .thanks-copy {
+  max-width: 724px;
+}
+
+.ai-def-stage {
+  position: absolute;
+  left: 50%;
+  top: calc(50% - 3.5px);
+  width: 1680px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 46px;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.ai-def-copy-block {
+  width: 658px;
+  height: 245px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 38px;
+  text-align: center;
+}
+
+.ai-def-title {
+  margin: 0;
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 80px;
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.8px;
+  text-transform: uppercase;
+}
+
+.ai-def-title .accent {
+  color: var(--accent);
+}
+
+.ai-def-subtitle {
+  margin: 0;
+  width: 100%;
+  color: var(--text-secondary);
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.7;
+}
+
+.ai-def-cards {
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  gap: 42px;
+}
+
+.ai-def-card {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid #32334a;
+  border-radius: 20px;
+  background: #161724;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.ai-def-card-head {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.ai-def-card-index {
+  margin: 0;
+  color: #3c3d54;
+  font-family: var(--font-display);
+  font-size: 64px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.64px;
+  opacity: 0.5;
+}
+
+.ai-def-card-title {
+  margin: 0;
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0.28px;
+  text-transform: uppercase;
+}
+
+.ai-def-card-rule {
+  width: 120px;
+  height: 3px;
+  background: var(--accent);
+}
+
+.ai-def-card-text {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.speaker-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: auto;
+}
+
+.speaker-avatar {
+  position: relative;
+  width: 48px;
+  height: 61px;
+  flex: 0 0 auto;
+  display: block;
+  object-fit: contain;
+  object-position: center;
+  filter: drop-shadow(0 0.405px 1.418px rgba(52, 45, 255, 0.07)) drop-shadow(0 5.533px 10.123px rgba(54, 47, 254, 0.27));
+}
+
+.speaker-details,
+.speaker-event {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.speaker-details {
+  gap: 0;
+}
+
+.speaker-name {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.7;
+}
+
+.speaker-role,
+.speaker-date {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.65;
+}
+
+.speaker-divider {
+  width: 1px;
+  height: 40px;
+  background: var(--text-muted);
+  opacity: 0.92;
+}
+
+.nav {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 74px;
+  width: max-content;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px;
+  border: 1px solid var(--white-10);
+  border-radius: 999px;
+  background: var(--nav-glass);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(8px);
+  z-index: 2;
+}
+
+.nav-btn {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--white-12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) ease,
+    background-color var(--dur-fast) ease,
+    color var(--dur-fast) ease;
+}
+
+.nav-btn:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.nav-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.nav-dots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 6px;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--white-25);
+}
+
+.dot.active {
+  width: 20px;
+  background: var(--accent);
+}
+
+.nav-btn.is-disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.a1,
+.a2,
+.a3,
+.a4,
+.a5,
+.af {
+  opacity: 0;
+}
+
+.slide.active .a1 { animation: fade-up var(--dur-slow) var(--ease-out) 60ms forwards; }
+.slide.active .a2 { animation: fade-up var(--dur-slow) var(--ease-out) 170ms forwards; }
+.slide.active .a3 { animation: fade-up var(--dur-slow) var(--ease-out) 290ms forwards; }
+.slide.active .a4 { animation: fade-up var(--dur-slow) var(--ease-out) 420ms forwards; }
+.slide.active .a5 { animation: fade-up var(--dur-slow) var(--ease-out) 540ms forwards; }
+.slide.active .af { animation: fade-in 900ms ease 120ms forwards; }
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+</style>
+</head>
+<body>
+<div class="presentation">
+  <div class="deck" id="deck">
+    <section class="slide slide-cover active" data-title="Designing as an AI-First Designer" aria-label="Cover slide">
+      <div class="grid-overlay af"></div>
+
+        <div class="hero">
+          <h1 class="hero-title a1">
+            Designing as an<br>
+            <span class="accent">AI-First</span> Designer
+          </h1>
+
+          <p class="hero-copy a2">
+            From governance AI to real estate intelligence lessons from two AI-native product experiences, and what they
+            taught me about designing for trust, uncertainty, and impact.
+          </p>
+
+          <div class="speaker-row a3">
+            <img
+              class="speaker-avatar"
+              src="https://www.figma.com/api/mcp/asset/069d9714-7b0f-458e-8054-601c5bef74a9"
+              alt=""
+              aria-hidden="true"
+            >
+
+            <div class="speaker-details">
+              <p class="speaker-name">Sayed Abdelaal</p>
+              <p class="speaker-role">Product Designer</p>
+            </div>
+
+            <div class="speaker-divider" aria-hidden="true"></div>
+
+            <div class="speaker-event">
+              <p class="speaker-date">April 14, 2026</p>
+              <p class="speaker-date">UXAWAY | Interview</p>
+            </div>
+          </div>
+        </div>
+    </section>
+
+    <section class="slide slide-about" data-title="About" aria-label="About slide">
+      <div class="grid-overlay af"></div>
+      <div class="about-left">
+        <div class="about-kicker a1">
+          <div class="about-kicker-line"></div>
+          <div class="about-kicker-text">About</div>
+        </div>
+
+        <h2 class="about-name a1">Sayed Abdelaal</h2>
+
+        <p class="about-intro a2">
+          Lead UX and Product Designer, educator, mentor and Team Builder with
+          <strong> 10+ years </strong>
+          of experience building digital products across B2B and B2C environments.
+          I delivered
+          <strong> 80+ digital products </strong>
+          for top-tier partners.
+        </p>
+
+        <p class="about-body a3">
+          In my current role, I'm a part of an AI-First team of UX/Product designers in a dynamic
+          Fintech environment, I collaborate with cross-functional teams, and ensure our solutions
+          are user-centered, intuitive, and aligned with business goals.
+        </p>
+
+        <p class="about-body a4">
+          Over the past three years, I've had the privilege of training and mentoring 3,000+ UX
+          students across multiple regions, actively shaping the next generation of UX leaders.
+        </p>
+      </div>
+
+      <div class="about-portrait-frame a3" aria-hidden="true">
+        <img
+          class="about-portrait-art"
+          src="https://www.figma.com/api/mcp/asset/cc3fff0d-8ab2-4704-8120-eff5c96b8424"
+          alt=""
+        >
+      </div>
+
+      <p class="about-roles a5">
+        DoPay ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· Product Designer<br>
+        UX Sweet ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· Mentor &amp; Coach<br>
+        Djed Studio ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· Head of Design<br>
+        Coventry University ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· DM Lecture
+      </p>
+    </section>
+
+    <section class="slide slide-agenda light-ui" data-title="Session Agenda" aria-label="Agenda slide">
+      <div class="agenda-light-side af"></div>
+      <div class="agenda-dark-side af"></div>
+      <div class="agenda-header">
+        <div class="agenda-kicker a1">
+          <div class="agenda-kicker-line"></div>
+          <div class="agenda-kicker-text">Session Agenda</div>
+        </div>
+
+        <h2 class="agenda-title a1">What we'll cover today</h2>
+      </div>
+
+      <div class="agenda-list">
+        <article class="agenda-item a2">
+          <div class="agenda-index">01</div>
+          <div class="agenda-copy">
+            <h3 class="agenda-item-title">AI-first Product Designer</h3>
+            <p class="agenda-item-text">What does that actually mean?</p>
+          </div>
+        </article>
+
+        <article class="agenda-item a2">
+          <div class="agenda-index">02</div>
+          <div class="agenda-copy">
+            <h3 class="agenda-item-title">GAIA</h3>
+            <p class="agenda-item-text">Represent ecosystems within governance processes.</p>
+          </div>
+        </article>
+
+        <article class="agenda-item a3">
+          <div class="agenda-index">03</div>
+          <div class="agenda-copy">
+            <h3 class="agenda-item-title">Smart Bricks</h3>
+            <p class="agenda-item-text">Real estate investment platform.</p>
+          </div>
+        </article>
+
+        <article class="agenda-item a3">
+          <div class="agenda-index">04</div>
+          <div class="agenda-copy">
+            <h3 class="agenda-item-title">AI in Design Workflow</h3>
+            <p class="agenda-item-text">Use AI tools in your day-to-day workflow.</p>
+          </div>
+        </article>
+      </div>
+
+      <aside class="question-card a4">
+        <p class="question-mark">?</p>
+        <h3 class="question-title">Quick Question</h3>
+        <ul class="question-list">
+          <li>WhatÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢s the first assumption or impression that comes to your mind when you hear "designing an AI-powered product or feature,"</li>
+          <li>What do you imagine it would look like?</li>
+        </ul>
+      </aside>
+    </section>
+
+    <section class="slide slide-ai-definition slide-dark-grid" data-title="AI-first Product Designer" aria-label="AI-first product designer slide">
+      <div class="grid-overlay af"></div>
+
+      <div class="ai-def-stage">
+        <div class="ai-def-copy-block">
+          <h2 class="ai-def-title a1">
+            What is An <span class="accent">AI-first</span><br>
+            Product Designer Means?
+          </h2>
+
+          <p class="ai-def-subtitle a2">
+            An AI-first Product Designer is a product designer who treats AI as a core part of both the product and the design process.
+          </p>
+        </div>
+
+        <div class="ai-def-cards a3">
+          <article class="ai-def-card">
+            <div class="ai-def-card-head">
+              <p class="ai-def-card-index">01</p>
+              <h3 class="ai-def-card-title">AI Product</h3>
+              <div class="ai-def-card-rule"></div>
+            </div>
+            <p class="ai-def-card-text">Design products where AI is part of the user experience itself, like copilots, recommendations, chat interfaces, automation, or predictive workflows.</p>
+          </article>
+
+          <article class="ai-def-card">
+            <div class="ai-def-card-head">
+              <p class="ai-def-card-index">02</p>
+              <h3 class="ai-def-card-title">Design Workflow</h3>
+              <div class="ai-def-card-rule"></div>
+            </div>
+            <p class="ai-def-card-text">Design products where AI is part of the user experience itself, like copilots, recommendations, chat interfaces, automation, or predictive workflows.</p>
+          </article>
+
+          <article class="ai-def-card">
+            <div class="ai-def-card-head">
+              <p class="ai-def-card-index">03</p>
+              <h3 class="ai-def-card-title">Human Judgment</h3>
+              <div class="ai-def-card-rule"></div>
+            </div>
+            <p class="ai-def-card-text">relying on human judgment for product direction, usability, and quality. <strong style="color:#fff;">NN/g</strong> frames AI as an assistant across design work rather than a replacement for design thinking.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide slide-gaia-intro slide-intro-light light-ui" data-title="GAIA" aria-label="GAIA intro slide">
+      <div class="light-grid-bg af"></div>
+
+      <div class="intro-title-block">
+        <div class="section-overline a1">
+          <div class="section-overline-line"></div>
+          <div class="section-overline-text">1st Product GAIA</div>
+        </div>
+        <h2 class="intro-title a1">GAIA</h2>
+      </div>
+
+      <div class="intro-copy-stack">
+        <p class="intro-lead a2">GAIA is an eco-tech initiative building AI systems that represent ecosystems inside governance processes.</p>
+        <p class="intro-body a3">Its core product, ENVAI, combines ecological data, cultural context, and legal reasoning to create a continuous, auditable, place-based representative for a river or ecosystem.</p>
+        <div class="info-grid a4">
+          <div class="info-card half">
+            <p class="info-label">Product</p>
+            <p class="info-value">Environmental Artificial Intelligence.</p>
+          </div>
+          <div class="info-card half">
+            <p class="info-label">Type</p>
+            <p class="info-value">Web-first environmental AI system</p>
+          </div>
+          <div class="info-card full">
+            <p class="info-label">Core idea</p>
+            <p class="info-value">Represent ecosystems inside governance processes.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="intro-hero-frame a3" aria-hidden="true">
+        <img src="https://www.figma.com/api/mcp/asset/a9d3f9f6-2b64-4e9d-8ea2-9c8a333e9f3b" alt="">
+      </div>
+    </section>
+
+    <section class="slide slide-gaia-walkthrough light-ui" data-title="GAIA Walkthrough" aria-label="GAIA walkthrough slide">
+      <div class="light-grid-bg af"></div>
+
+      <div class="walkthrough-main">
+        <div class="section-overline a1">
+          <div class="section-overline-line"></div>
+          <div class="section-overline-text">GAIA A Walkthrough</div>
+        </div>
+        <h2 class="walkthrough-heading a1">A Walkthrough</h2>
+      </div>
+
+      <div class="walkthrough-main-body">
+        <article class="walk-step a2">
+          <div class="walk-step-head">
+            <div class="walk-step-index">
+              <span>01</span>
+              <div class="line"></div>
+            </div>
+            <div class="walk-step-title-wrap">
+              <h3 class="walk-step-title">The Problem</h3>
+            </div>
+          </div>
+          <p class="walk-step-copy">Environmental data exists, but ecosystems still lack representation in governance While sometimes nature visible, measurable, and reportable, Yet it’s not institutionally represented</p>
+        </article>
+
+        <article class="walk-step a3">
+          <div class="walk-step-head">
+            <div class="walk-step-index">
+              <span>02</span>
+              <div class="line"></div>
+            </div>
+            <div class="walk-step-title-wrap">
+              <h3 class="walk-step-title">My Role as an AI-first Designer</h3>
+            </div>
+          </div>
+          <ul class="walk-step-list">
+            <li>Translate a complex concept into a usable product model</li>
+            <li>Define the user experience across public, institutional, and future AI interfaces</li>
+          </ul>
+        </article>
+
+        <article class="walk-step a4">
+          <div class="walk-step-head">
+            <div class="walk-step-index">
+              <span>03</span>
+              <div class="line"></div>
+            </div>
+            <div class="walk-step-title-wrap">
+              <h3 class="walk-step-title">My Design Process</h3>
+            </div>
+          </div>
+          <div class="walk-step-copy">The normal design process with one additional layer into the process</div>
+          <ul class="walk-step-list">
+            <li>Scope the AI before designing the UI.<br>What should the model do, and what should it never do?</li>
+          </ul>
+        </article>
+      </div>
+
+      <aside class="walkthrough-sidebar w600">
+        <div class="walkthrough-sidebar-stack">
+          <div class="side-card a2">
+            <p class="quote-mark">"</p>
+            <h3 class="side-card-title">My Role Challenge</h3>
+            <p class="side-card-copy">Understand how the AI model works, and it’s capabilities.</p>
+          </div>
+
+          <div class="side-card a3">
+            <p class="quote-mark">"</p>
+            <h3 class="side-card-title">The Product Challenge</h3>
+            <p class="side-card-copy">Was to move from monitoring to representation.</p>
+          </div>
+
+          <div class="side-card a4">
+            <p class="quote-mark">"</p>
+            <h3 class="side-card-title">Clear communications</h3>
+            <p class="side-card-copy">What are their expectations from the designer?<br>What are the priorities?<br>What a success looks like?</p>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="slide slide-gaia-walkthrough-b light-ui" data-title="GAIA Walkthrough" aria-label="GAIA walkthrough slide two">
+      <div class="light-grid-bg af"></div>
+
+      <div class="walkthrough-main">
+        <div class="section-overline a1">
+          <div class="section-overline-line"></div>
+          <div class="section-overline-text">GAIA A Walkthrough</div>
+        </div>
+      </div>
+
+      <div class="a2" style="position:absolute;left:120px;top:190px;width:780px;display:flex;flex-direction:column;gap:60px;z-index:2;">
+        <article class="walk-step">
+          <div class="walk-step-head">
+            <div class="walk-step-index">
+              <span>04</span>
+              <div class="line"></div>
+            </div>
+            <div class="walk-step-title-wrap">
+              <h3 class="walk-step-title">Stakeholders collaborations</h3>
+            </div>
+          </div>
+          <ul class="walk-step-list">
+            <li>Define and frame the design scope.</li>
+            <li>Uncover all information related to the design decision.</li>
+            <li>Output formats.</li>
+          </ul>
+          <div style="display:flex;gap:40px;height:191px;align-items:end;">
+            <div style="flex:1;min-width:0;height:191px;overflow:hidden;">
+              <img src="https://www.figma.com/api/mcp/asset/2b32b618-abfd-4dc8-ba83-f191a099df7d" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">
+            </div>
+            <div style="flex:1;min-width:0;height:191px;overflow:hidden;">
+              <img src="https://www.figma.com/api/mcp/asset/b77b9d16-a583-4d83-8b80-23d0d4571202" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">
+            </div>
+          </div>
+        </article>
+
+        <article class="walk-step a3">
+          <div class="walk-step-head">
+            <div class="walk-step-index">
+              <span>05</span>
+              <div class="line"></div>
+            </div>
+            <div class="walk-step-title-wrap">
+              <h3 class="walk-step-title">Where It Creates Value</h3>
+            </div>
+          </div>
+          <ul class="walk-step-list">
+            <li>Define and frame the design scope.</li>
+            <li>Uncover all information related to the design decision.</li>
+            <li>Output formats.</li>
+          </ul>
+        </article>
+      </div>
+
+      <aside class="walkthrough-sidebar w900">
+        <div class="walkthrough-sidebar-stack">
+          <div class="side-card a2">
+            <p class="quote-mark">"</p>
+            <h3 class="side-card-title">How the AI model built?</h3>
+            <p class="side-card-copy">The system is built around a tri-bench model:<br>Scientist, interprets ecological data.<br>Anthropologist, adds cultural and historical context.<br>Advocate, translates outputs into governance-compatible positions.</p>
+          </div>
+
+          <div class="side-card a3">
+            <p class="quote-mark">"</p>
+            <h3 class="side-card-title">How the AI Model Works?</h3>
+            <p class="side-card-copy">Connects place-based ecosystem data to a reasoning system, Interprets environmental signals through multiple lenses<br>Transforms those signals into outputs institutions can engage with.</p>
+          </div>
+
+          <div class="side-card a4">
+            <p class="quote-mark">"</p>
+            <h3 class="side-card-title">Measure Success</h3>
+            <ul class="side-card-list">
+              <li>Can users understand the output and know what to do next?</li>
+              <li>Do users feel the system is clear, credible, and reviewable?</li>
+              <li>Does the output reduce interpretation effort or improve decision quality?</li>
+              <li>Do outputs trigger institutional discussion or response?</li>
+              <li>Does the product move from concept to recognized governance infrastructure?</li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="slide slide-gaia-demo slide-demo" data-title="GAIA Demo" aria-label="GAIA demo slide">
+      <div class="grid-overlay af"></div>
+
+      <div class="demo-title-block">
+        <div class="section-overline a1">
+          <div class="section-overline-line"></div>
+          <div class="walkthrough-overline-text">GAIA A Walkthrough</div>
+        </div>
+        <h2 class="demo-title a1">Demo Time</h2>
+      </div>
+
+      <div class="demo-caption a2">
+        <p>DonÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢t Judge, it was my first Touch</p>
+        <div class="demo-caption-icon">
+          <img src="https://www.figma.com/api/mcp/asset/cdf80b62-ef3e-4c08-91ce-ee2c2d7c2227" alt="">
+        </div>
+      </div>
+
+      <div class="demo-frame gaia a3">
+        <img src="https://www.figma.com/api/mcp/asset/4595e66a-4edf-4cbf-8b29-f97f08c69858" alt="">
+      </div>
+    </section>
+
+    <section class="slide slide-smartbricks-intro slide-intro-light light-ui" data-title="Smart Bricks" aria-label="Smart Bricks intro slide">
+      <div class="light-grid-bg af"></div>
+
+      <div class="intro-title-block">
+        <div class="section-overline a1">
+          <div class="section-overline-line"></div>
+          <div class="section-overline-text">2nd Product Smart Bricks</div>
+        </div>
+        <h2 class="intro-title a1">Smart Bricks</h2>
+      </div>
+
+      <div class="intro-copy-stack">
+        <p class="intro-lead a2">An AI-powered real estate investment platform that helps investors discover, evaluate, and act on top property opportunities with more speed and confidence.</p>
+        <p class="intro-body a3">I designed the MVP V1 to support more informed decision-making for investors. This UX design led to a 70% increase in landing page conversions and an increase in closed deals from 6% to 28% within the first month.</p>
+        <div class="info-grid a4">
+          <div class="info-card half">
+            <p class="info-label">Product</p>
+            <p class="info-value">Real-estate Investment Platform.</p>
+          </div>
+          <div class="info-card half">
+            <p class="info-label">Type</p>
+            <p class="info-value">Mobile-first Investment Platform. +(AI Feature)</p>
+          </div>
+          <div class="info-card full">
+            <p class="info-label">Core idea</p>
+            <p class="info-value">Help investors make better decisions with an AI decision-support system tailored to their investment preferences.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="intro-hero-frame narrow a3" aria-hidden="true">
+        <img src="https://www.figma.com/api/mcp/asset/6a9a288f-f330-46c3-bcd7-5505188aa7d5" alt="">
+      </div>
+    </section>
+
+    <section class="slide slide-smartbricks-walkthrough-a light-ui" data-title="Smart Bricks Walkthrough" aria-label="Smart Bricks walkthrough slide one">
+      <div class="light-grid-bg af"></div>
+
+      <div class="walkthrough-main">
+        <div class="section-overline a1">
+          <div class="section-overline-line"></div>
+          <div class="section-overline-text">2nd Product Smart Bricks</div>
+        </div>
+        <h2 class="walkthrough-heading a1">A Walkthrough</h2>
+      </div>
+
+      <div class="walkthrough-main-body">
+        <article class="walk-step a2">
+          <div class="walk-step-head">
+            <div class="walk-step-index">
+              <span>01</span>
+              <div class="line"></div>
+            </div>
+            <div class="walk-step-title-wrap">
+              <h3 class="walk-step-title">The Problem</h3>
+            </div>
+          </div>
+          <p class="walk-step-copy">Real estate investors lack access to reliable, data-driven insights, making it difficult to assess ROI and identify optimal opportunities.</p>
+        </article>
+
+        <article class="walk-step a3">
+          <div class="walk-step-head">
+            <div class="walk-step-index">
+              <span>02</span>
+              <div class="line"></div>
+            </div>
+            <div class="walk-step-title-wrap">
+              <h3 class="walk-step-title">My Role as an AI-first Designer</h3>
+            </div>
+          </div>
+          <ul class="walk-step-list">
+            <li>I led end-to-end design to turn a manual, overwhelming process into an intelligent, user-centric experience enabling investors to make faster, more informed decisions.</li>
+          </ul>
+        </article>
+
+        <article class="walk-step a4">
+          <div class="walk-step-head">
+            <div class="walk-step-index">
+              <span>03</span>
+              <div class="line"></div>
+            </div>
+            <div class="walk-step-title-wrap">
+              <h3 class="walk-step-title">My Design Process</h3>
+            </div>
+          </div>
+          <div class="walk-step-copy">The standard design process, with one additional layer:</div>
+          <ul class="walk-step-list">
+            <li>Scope the AI feature before designing the UI.<br>What are its capabilities, limitations, and risks?</li>
+          </ul>
+        </article>
+      </div>
+
+      <aside class="walkthrough-sidebar w600">
+        <div class="walkthrough-sidebar-stack gap-52">
+          <div class="side-card a2">
+            <p class="quote-mark">"</p>
+            <h3 class="side-card-title">My Role Challenge</h3>
+            <p class="side-card-copy">Understand how the AI model works, and itÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢s capabilities.</p>
+          </div>
+
+          <div class="side-card a3">
+            <p class="quote-mark">"</p>
+            <h3 class="side-card-title">The Product Challenge</h3>
+            <p class="side-card-copy">Control AI token usage.<br>Ensure fare token usage.</p>
+          </div>
+
+          <div class="side-card a4">
+            <p class="quote-mark">"</p>
+            <h3 class="side-card-title">Clear communications</h3>
+            <p class="side-card-copy">What are their expectations from the designer?<br>What are the priorities?<br>What a success looks like?<br>What failure looks like and how to avoid it?</p>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="slide slide-smartbricks-walkthrough-b light-ui" data-title="Smart Bricks Walkthrough" aria-label="Smart Bricks walkthrough slide two">
+      <div class="light-grid-bg af"></div>
+
+      <div class="walkthrough-main">
+        <div class="section-overline a1">
+          <div class="section-overline-line"></div>
+          <div class="section-overline-text">Smart Bricks Walkthrough</div>
+        </div>
+      </div>
+
+      <div class="walkthrough-main-body narrow">
+        <article class="walk-step a2">
+          <div class="walk-step-head">
+            <div class="walk-step-index">
+              <span>04</span>
+              <div class="line"></div>
+            </div>
+            <div class="walk-step-title-wrap">
+              <h3 class="walk-step-title">What the AI was doing</h3>
+            </div>
+          </div>
+          <ul class="walk-step-list">
+            <li>Analyzing thousands of data points and 600+ variables for investment recommendations</li>
+            <li>Continuously refining forecasts as new market data arrives</li>
+            <li>Ranking opportunities by expected risk-adjusted return</li>
+          </ul>
+        </article>
+
+        <article class="walk-step a3">
+          <div class="walk-step-head">
+            <div class="walk-step-index">
+              <span>05</span>
+              <div class="line"></div>
+            </div>
+          <div class="walk-step-title-wrap">
+              <h3 class="walk-step-title">My Approach, How I Started</h3>
+            </div>
+          </div>
+          <ul class="walk-step-list">
+            <li>Frame the user problem (Individual Investors)
+              <ul>
+                <li>What decision is the user trying to make?</li>
+                <li>What makes that decision hard today?</li>
+                <li>What part of that difficulty can AI reduce?</li>
+              </ul>
+            </li>
+          </ul>
+        </article>
+
+        <article class="walk-step a4">
+          <div class="walk-step-head">
+            <div class="walk-step-index">
+              <span>06</span>
+              <div class="line"></div>
+            </div>
+            <div class="walk-step-title-wrap">
+              <h3 class="walk-step-title">What I Learned</h3>
+            </div>
+          </div>
+          <ul class="walk-step-list">
+            <li>Prompting is part of design, design it in a way that reduce token usage consumption.</li>
+            <li>I needed to understand the risks early, not just the design scope.</li>
+          </ul>
+        </article>
+      </div>
+
+      <aside class="walkthrough-sidebar w1140">
+        <div class="walkthrough-sidebar-stack">
+          <div class="side-card a2">
+            <p class="quote-mark">"</p>
+            <h3 class="side-card-title">How the AI Feature Works?</h3>
+            <p class="side-card-copy">The platform integrates an external AI service that powers smart investment insights.<br>This AI service incurs costs based on user consumption.</p>
+          </div>
+
+          <div class="side-card a3">
+            <p class="quote-mark">"</p>
+            <h3 class="side-card-title">Design experience Challenge</h3>
+            <p class="side-card-copy">One of our challenges was ensuring fair usage and controlling user consumption to manage costs, while seamlessly embedding AI as a natural part of the user experience.</p>
+          </div>
+
+          <div class="side-card a4" style="width:660px;">
+            <p class="quote-mark">"</p>
+            <h3 class="side-card-title">What IÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢d do better</h3>
+            <ul class="side-card-list">
+              <li>Understand latency, API, and data pipeline realities.</li>
+            </ul>
+          </div>
+
+          <div class="side-card a5" style="width:660px;">
+            <p class="quote-mark">"</p>
+            <h3 class="side-card-title">Measure Success</h3>
+            <ul class="side-card-list">
+              <li>Time to evaluate an opportunity</li>
+              <li>Task success and decision completion rate</li>
+              <li>Recommendation engagement &amp; Retention and repeated portfolio usage</li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="slide slide-smartbricks-demo slide-demo" data-title="Smart Bricks Demo" aria-label="Smart Bricks demo slide">
+      <div class="grid-overlay af"></div>
+
+      <div class="demo-title-block">
+        <div class="section-overline a1">
+          <div class="section-overline-line"></div>
+          <div class="walkthrough-overline-text">GAIA A Walkthrough</div>
+        </div>
+        <h2 class="demo-title a1">Demo Time</h2>
+      </div>
+
+      <div class="demo-caption a2">
+        <p>Judge itÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢s Okay, itÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢s my 2nd Touch</p>
+        <div class="demo-caption-icon">
+          <img src="https://www.figma.com/api/mcp/asset/c592ff6e-24df-4db7-9630-095cf0247ee4" alt="">
+        </div>
+      </div>
+
+      <div class="demo-frame smart a3">
+        <img src="https://www.figma.com/api/mcp/asset/4eceb73f-e13f-4f4b-b353-9b9a8a4e6996" alt="">
+      </div>
+    </section>
+
+    <section class="slide slide-questions" data-title="Questions" aria-label="Questions slide">
+      <div class="grid-overlay af"></div>
+
+      <div class="questions-main">
+        <h2 class="questions-title a1">Time for <span class="accent">Questions</span></h2>
+        <p class="questions-lead a2">These are my very first 2 products out of almost 11 AI products I contributed to.</p>
+
+        <div class="side-card questions-card a3">
+          <p class="quote-mark">"</p>
+          <h3 class="side-card-title">I have a question for you</h3>
+          <ul class="side-card-list">
+            <li>What assumptions do you have when you hear the word design an AI product/ AI feature. What is the first thing comes to your mind</li>
+            <li>What things youÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢d do different If you were me.</li>
+          </ul>
+        </div>
+      </div>
+
+      <aside class="questions-side">
+        <div class="questions-side-stack">
+          <p class="questions-side-lead a2">If you havenÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢t been involved in designing an AI product or feature yet, here is a practical step to get started.</p>
+
+          <div class="side-card a3">
+            <p class="quote-mark">"</p>
+            <h3 class="side-card-title">Take the Initiative</h3>
+            <ul class="side-card-list">
+              <li>Read up on AI basics, learning about common AI concepts.</li>
+              <li>Collaborate with an engineer on a small AI feature project to understand technical constraints.</li>
+              <li>Analyze successful AI products. Understand how they explain the AIÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢s role to users.</li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="slide slide-ai-workflow light-ui" data-title="AI in Design Workflow" aria-label="AI workflow slide">
+      <div class="light-grid-bg af"></div>
+      <h2 class="workflow-title a1">Use <span class="accent">AI</span> in design workflow</h2>
+
+      <div class="workflow-credit a2">
+        <div class="workflow-credit-avatar">
+          <img src="https://www.figma.com/api/mcp/asset/1bb77873-80bf-470a-85cd-f5a74cb51095" alt="">
+        </div>
+        <p class="workflow-credit-name">Menna Kenawy</p>
+        <p class="workflow-credit-role">UI/UX Designer</p>
+      </div>
+
+      <div class="workflow-frame a3">
+        <img src="https://www.figma.com/api/mcp/asset/0979c6f5-138b-413a-b1b7-1e754848360b" alt="">
+      </div>
+    </section>
+
+    <section class="slide slide-thanks" data-title="Thank You" aria-label="Thank you slide">
+      <div class="grid-overlay af"></div>
+
+      <div class="thanks-glow af" aria-hidden="true">
+        <img src="https://www.figma.com/api/mcp/asset/c05c8c39-097b-449d-bc59-6438ab886f08" alt="">
+      </div>
+
+      <div class="thanks-center">
+        <h2 class="thanks-title a1">Thank <span class="accent">You</span></h2>
+
+        <div class="thanks-copy a2">
+          <p style="margin:0 0 6px;">Feel free to connect with me on LinkedIn.</p>
+          <p style="margin:0 0 6px;">If you start applying any of the ideas we discussed, and have questions,<br>donÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢t hesitate to reach out. IÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢m always happy to support and continue the conversation.</p>
+          <p style="margin:0;">Looking forward to seeing what you build.</p>
+        </div>
+
+        <div class="speaker-row a3">
+          <img
+            class="speaker-avatar"
+            src="https://www.figma.com/api/mcp/asset/502be2ec-afad-4d0c-8d4c-7b019a423c1c"
+            alt=""
+            aria-hidden="true"
+          >
+
+          <div class="speaker-details">
+            <p class="speaker-name">Sayed Abdelaal</p>
+            <p class="speaker-role">Product Designer</p>
+          </div>
+
+          <div class="speaker-divider" aria-hidden="true"></div>
+
+          <div class="speaker-event">
+            <p class="speaker-date">April 14, 2026</p>
+            <p class="speaker-date">UXAWAY | Interview</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="deck-ui">
+      <div class="progress-bar" id="progress"></div>
+      <div class="bottom-cover"></div>
+      <div class="top-meta">
+        <div></div>
+        <div class="page-title" id="pageTitle">Designing as an AI-First Designer</div>
+      </div>
+
+      <div class="nav" aria-label="Presentation navigation">
+        <button class="nav-btn" id="prevBtn" type="button" aria-label="Previous slide">
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M9.5 3.5L5 8l4.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
+
+        <div class="nav-dots" id="dots" aria-hidden="true"></div>
+
+        <button class="nav-btn" id="nextBtn" type="button" aria-label="Next slide">
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M6.5 3.5L11 8l-4.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="bottom-meta">
+        <div class="brand">
+          <img class="brand-mark" src="https://www.figma.com/api/mcp/asset/c648e968-6e1c-4dc4-941c-b8d715fb3235" alt="UX Sweet logo">
+          <div class="brand-label">UX Sweet</div>
+        </div>
+
+        <div class="count">
+          <span id="currentSlide">1</span>
+          <span>/</span>
+          <span id="totalSlides">1</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SLIDES = Array.from(document.querySelectorAll(".slide"));
+const TOTAL = SLIDES.length;
+const progressEl = document.getElementById("progress");
+const pageTitleEl = document.getElementById("pageTitle");
+const currentSlideEl = document.getElementById("currentSlide");
+const totalSlidesEl = document.getElementById("totalSlides");
+const dotsEl = document.getElementById("dots");
+const deckUiEl = document.querySelector(".deck-ui");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+let currentIndex = 0;
+
+function buildDots() {
+  dotsEl.innerHTML = "";
+
+  SLIDES.forEach((_, index) => {
+    const dot = document.createElement("span");
+    dot.className = "dot";
+    dot.addEventListener("click", function () {
+      goTo(index);
+    });
+    dotsEl.appendChild(dot);
+  });
+}
+
+function updateControls() {
+  const activeSlide = SLIDES[currentIndex];
+  const title = activeSlide.dataset.title || "Presentation";
+  pageTitleEl.textContent = title;
+  deckUiEl.classList.toggle("ui-light-brand", activeSlide.classList.contains("light-ui"));
+  currentSlideEl.textContent = String(currentIndex + 1);
+  totalSlidesEl.textContent = String(TOTAL);
+  progressEl.style.width = ((currentIndex + 1) / TOTAL * 100) + "%";
+
+  Array.from(dotsEl.children).forEach(function (dot, index) {
+    dot.classList.toggle("active", index === currentIndex);
+  });
+
+  const isSingleSlide = TOTAL <= 1;
+  prevBtn.classList.toggle("is-disabled", isSingleSlide);
+  nextBtn.classList.toggle("is-disabled", isSingleSlide);
+  prevBtn.disabled = isSingleSlide;
+  nextBtn.disabled = isSingleSlide;
+}
+
+function replayAnimations(slide) {
+  slide.querySelectorAll(".a1,.a2,.a3,.a4,.a5,.af").forEach(function (el) {
+    el.style.animation = "none";
+    void el.offsetHeight;
+    el.style.animation = "";
+  });
+}
+
+function goTo(index) {
+  SLIDES[currentIndex].classList.remove("active");
+  currentIndex = (index + TOTAL) % TOTAL;
+  SLIDES[currentIndex].classList.add("active");
+  replayAnimations(SLIDES[currentIndex]);
+  updateControls();
+}
+
+function scaleDeck() {
+  const deck = document.getElementById("deck");
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const scale = Math.max(vw / 1920, vh / 1080);
+  const offsetX = (vw - (1920 * scale)) / 2;
+  const offsetY = (vh - (1080 * scale)) / 2;
+  deck.style.transform = "translate(" + offsetX + "px," + offsetY + "px) scale(" + scale + ")";
+}
+
+buildDots();
+updateControls();
+prevBtn.addEventListener("click", function () {
+  if (TOTAL > 1) {
+    goTo(currentIndex - 1);
+  }
+});
+nextBtn.addEventListener("click", function () {
+  if (TOTAL > 1) {
+    goTo(currentIndex + 1);
+  }
+});
+document.addEventListener("keydown", function (event) {
+  if (TOTAL <= 1) {
+    return;
+  }
+
+  if (["ArrowRight", "ArrowDown", " "].includes(event.key)) {
+    event.preventDefault();
+    goTo(currentIndex + 1);
+  }
+
+  if (["ArrowLeft", "ArrowUp"].includes(event.key)) {
+    event.preventDefault();
+    goTo(currentIndex - 1);
+  }
+});
+scaleDeck();
+window.addEventListener("resize", scaleDeck);
+</script>
+</body>
+</html>
