@@ -1104,6 +1104,72 @@ button {
   object-position: center center;
 }
 
+.slide-smartbricks-demo .demo-title-block {
+  gap: 44px;
+}
+
+.slide-smartbricks-demo .demo-compare {
+  position: absolute;
+  right: 120px;
+  top: 120px;
+  width: 880px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  z-index: 2;
+}
+
+.slide-smartbricks-demo .demo-compare-card {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid #3c3d54;
+  border-radius: 20px;
+  background: #161724;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.slide-smartbricks-demo .demo-compare-head {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.slide-smartbricks-demo .demo-compare-title {
+  margin: 0;
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0.28px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.slide-smartbricks-demo .demo-compare-line {
+  width: 120px;
+  height: 3px;
+  background: var(--accent);
+}
+
+.slide-smartbricks-demo .demo-compare-copy {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.slide-smartbricks-demo .demo-caption {
+  left: 120px;
+  right: auto;
+  top: 280px;
+}
+
 .slide-smartbricks-intro .intro-hero-frame {
   background: linear-gradient(180deg, #659bd142 0%, #d7e1eb 100%);
 }
@@ -2250,15 +2316,33 @@ button {
         <h2 class="demo-title a1">Demo Time</h2>
       </div>
 
+      <div class="demo-compare a2">
+        <div class="demo-compare-card">
+          <div class="demo-compare-head">
+            <h3 class="demo-compare-title">Before the AI Watchlist</h3>
+            <div class="demo-compare-line"></div>
+          </div>
+          <p class="demo-compare-copy">Manual search through many listings<br>Time spent opening and comparing properties<br>High effort, low action</p>
+        </div>
+
+        <div class="demo-compare-card">
+          <div class="demo-compare-head">
+            <h3 class="demo-compare-title">After the AI Watchlist</h3>
+            <div class="demo-compare-line"></div>
+          </div>
+          <p class="demo-compare-copy">Set preferences once<br>AI finds matching opportunities<br>Faster evaluation, more action</p>
+        </div>
+      </div>
+
       <div class="demo-caption a2">
         <p>Judge it’s Okay, it’s my 2nd Touch</p>
         <div class="demo-caption-icon">
-          <img src="https://www.figma.com/api/mcp/asset/c592ff6e-24df-4db7-9630-095cf0247ee4" alt="">
+          <img src="https://www.figma.com/api/mcp/asset/ed16a4d5-96d2-4e13-b880-bd0b699c6921" alt="">
         </div>
       </div>
 
       <div class="demo-frame smart a3">
-        <img src="https://www.figma.com/api/mcp/asset/4eceb73f-e13f-4f4b-b353-9b9a8a4e6996" alt="">
+        <img src="https://www.figma.com/api/mcp/asset/22394781-1343-4492-aff0-82565efc5f52" alt="">
       </div>
     </section>
 
