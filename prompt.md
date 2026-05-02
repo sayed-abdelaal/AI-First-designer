@@ -7,16 +7,16 @@ Use this prompt when asking Codex to create a new presentation in the same style
 Create this presentation using the exact same presentation system as my current project.
 
 Working file:
-- [index.html](G:/Codex/AI-First designer/index.html)
+- [index.html](</G:/Codex/AI-First designer/index.html>)
 
 Design system reference:
-- [design.md](G:/Codex/AI-First designer/design.md)
+- [design.md](</G:/Codex/AI-First designer/design.md>)
 
 Important:
 - The existing coded presentation system is the source of truth
 - Do not redesign the system
 - Do not invent a new visual language
-- Follow the same layout logic, spacing rhythm, typography, colors, framing, and motion style
+- Follow the same layout logic, spacing rhythm, typography, colors, framing, motion style, and asset workflow
 
 Use the exact same stack:
 - plain HTML
@@ -33,7 +33,7 @@ Keep the architecture clean:
 - JavaScript should remain simple and presentation-focused
 
 Presentation rules:
-- every slide is a fixed `1920 × 1080` canvas
+- every slide is a fixed `1920 x 1080` canvas
 - aspect ratio is `16:9`
 - do not build slides as responsive web sections
 - use pixel-based positioning and sizing where exact matching matters
@@ -45,6 +45,11 @@ Presentation rules:
   - bottom brand
   - slide count
   - centered nav
+
+Asset rules:
+- use local assets from [assets](</G:/Codex/AI-First designer/assets>)
+- do not leave finished slides linked to temporary Figma asset URLs
+- if you fetch from Figma, download locally first and then update the HTML path
 
 Typography rules:
 - use `Bebas Neue` for display/headlines
@@ -66,7 +71,7 @@ Implementation rules:
 - reuse existing tokens whenever possible
 - reuse existing components whenever possible
 - do not scale content arbitrarily
-- do not “improve” spacing unless explicitly instructed
+- do not improve spacing unless explicitly instructed
 - do not make stylistic assumptions outside the current system
 
 When creating new slides:
@@ -98,5 +103,4 @@ Non-negotiable:
 
 Short version:
 
-“Use the same stack and visual system as my current presentation project: plain HTML, plain CSS, vanilla JS, fixed 1920×1080 slides, Bebas Neue + Inter, shared presentation chrome, CSS keyframe stagger animations, and pixel-precise layout. Treat existing slides as locked unless I say otherwise. Follow design.md as the source of implementation rules.” 
-
+"Use the same stack and visual system as my current presentation project: plain HTML, plain CSS, vanilla JS, fixed 1920x1080 slides, Bebas Neue + Inter, shared presentation chrome, CSS keyframe stagger animations, pixel-precise layout, and local assets from the assets folder. Treat existing slides as locked unless I say otherwise. Follow design.md as the source of implementation rules."

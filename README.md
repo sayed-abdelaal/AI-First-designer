@@ -16,6 +16,21 @@ Use this as:
 - the code source of truth
 - the final rendered presentation
 
+### `assets/`
+
+Local presentation images used by the slides.
+
+Use this as:
+- the stable source for slide imagery
+- the replacement for temporary Figma asset links
+
+Important:
+- do not rely on remote Figma MCP asset URLs for finished slides
+- when an asset changes, re-download it locally and update the HTML path
+
+Open:
+- [assets](</G:/Codex/AI-First designer/assets>)
+
 ### `design.md`
 
 The design system and implementation spec extracted from the coded presentation.
@@ -36,7 +51,7 @@ A reusable prompt for Codex so new presentations or slides follow the same syste
 Use this when you want to:
 - ask Codex to create a new presentation in this style
 - ask Codex to add new slides while keeping the system consistent
-- avoid repeating the same technical/design instructions each time
+- avoid repeating the same technical and design instructions each time
 
 Open:
 - [prompt.md](</G:/Codex/AI-First designer/prompt.md>)
@@ -47,13 +62,13 @@ Open:
 
 1. Start from `prompt.md`
 2. Tell Codex what slides or Figma frames to build
-3. Use `design.md` as the rulebook for exact spacing, typography, and component reuse
+3. Use `design.md` as the rulebook for exact spacing, typography, component reuse, and asset handling
 4. Keep `index.html` as the live implementation target
 
 ### If you want to recreate the system in Figma
 
 1. Read `design.md`
-2. Rebuild the master frame at `1920 × 1080`
+2. Rebuild the master frame at `1920 x 1080`
 3. Recreate the shared chrome and reusable components first
 4. Match all values literally from the implemented system
 
@@ -68,8 +83,9 @@ Open:
 
 - The coded presentation is the source of truth
 - Slides are fixed presentation canvases, not responsive page sections
-- Preserve `1920 × 1080` unless the whole system intentionally changes
+- Preserve `1920 x 1080` unless the whole system intentionally changes
 - Preserve pixel-based spacing and sizing where visual fidelity matters
+- Keep presentation assets local
 - Do not redesign the system unintentionally
 
 ## Quick Start
@@ -77,5 +93,5 @@ Open:
 Use:
 - [design.md](</G:/Codex/AI-First designer/design.md>) for system documentation
 - [prompt.md](</G:/Codex/AI-First designer/prompt.md>) for Codex instructions
+- [assets](</G:/Codex/AI-First designer/assets>) for local imagery
 - [index.html](</G:/Codex/AI-First designer/index.html>) for implementation
-

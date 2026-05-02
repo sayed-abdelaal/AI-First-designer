@@ -1,12 +1,12 @@
 # Presentation Design System
 
-Source of truth: [index.html](G:/Codex/AI-First designer/index.html)
+Source of truth: [index.html](</G:/Codex/AI-First designer/index.html>)
 
-This file documents the implemented presentation system so new presentations can follow the exact same style, proportions, and behavior.
+This file documents the implemented presentation system so new presentations can follow the same style, proportions, behavior, and asset workflow.
 
 ## Purpose
 
-Use this system when creating a new presentation that should feel identical in structure, spacing, tone, and motion to the current project.
+Use this system when creating a new presentation that should feel identical in structure, spacing, tone, framing, and motion to the current project.
 
 This is a fixed-slide presentation system, not a responsive web page system.
 
@@ -27,7 +27,7 @@ This is a fixed-slide presentation system, not a responsive web page system.
 
 ## Master Canvas
 
-- Slide size: `1920px × 1080px`
+- Slide size: `1920px x 1080px`
 - Aspect ratio: `16:9`
 - Every slide must be treated as a fixed artboard
 - Do not redesign layouts as responsive sections
@@ -120,7 +120,7 @@ Repeated spacing values used in the system:
 - `110`
 - `120`
 
-Do not invent a new spacing scale unless the new presentation requires it. Prefer these existing values first.
+Prefer these values before inventing new spacing for new slides.
 
 ## Typography
 
@@ -246,6 +246,24 @@ Supporting literals used in the implementation:
 - `#f5dada`
 - `#659bd11c`
 - `#659bd142`
+
+## Asset Rules
+
+Presentation assets are localized in the project and should remain local.
+
+- Store slide images in [assets](</G:/Codex/AI-First designer/assets>)
+- Reference local asset paths from [index.html](</G:/Codex/AI-First designer/index.html>)
+- Do not leave finished slides pointed at temporary Figma MCP asset URLs
+- If an image is refreshed from Figma, download it into `assets/` first, then update the HTML reference
+
+Current shared asset categories:
+
+- speaker avatars
+- portrait art
+- demo / workflow screens
+- emoji accents
+- glow artwork
+- logo / brand mark
 
 ## Shared Components
 
@@ -423,9 +441,22 @@ const scale = Math.max(vw / 1920, vh / 1080);
 
 This means the deck uses cover-style scaling, not contain-style scaling.
 
+## Shared Chrome Notes
+
+The shared presentation UI is global and reused across slides:
+
+- top page title
+- progress bar
+- bottom accent cover line
+- centered nav pill
+- bottom-left brand
+- bottom-right slide count
+
+When extending the deck, prefer the actual CSS and JS in [index.html](</G:/Codex/AI-First designer/index.html>) over earlier assumptions.
+
 ## Rules for New Presentations in This Style
 
-- Keep the master frame at `1920 × 1080`
+- Keep the master frame at `1920 x 1080`
 - Keep slide content pixel-based
 - Reuse the same safe insets: `60 / 32 / 60`
 - Reuse the same display/body fonts
@@ -440,7 +471,7 @@ This means the deck uses cover-style scaling, not contain-style scaling.
 
 If recreating this in Figma:
 
-- frame size must be `1920 × 1080`
+- frame size must be `1920 x 1080`
 - use pixel values only
 - create reusable components for:
   - nav
@@ -466,4 +497,3 @@ If recreating this in Figma:
 - Do not center by eye; use exact coordinates or exact frame centering
 - Do not change `cover`/`contain` behavior without checking the source slide
 - Do not introduce Tailwind or framework abstractions into this presentation system unless the project intentionally changes architecture
-
